@@ -17,3 +17,6 @@ The user renamed the wordmark to NCS and explicitly selected the sky/hero sectio
 
 ## Brand identity
 The website is for No Code Society (NCS). Use the user-supplied pixelated white crescent logo at `dist/assets/no-code-society-logo.png`. Nightfall was an initial design concept, not the organization's identity. Do not describe NCS as a sky experiment or invent its history, membership, events, or affiliations.
+
+## Restored sky
+Restore the drifting ASCII moon and stars as an ambient scene between the NCS header and the nocodesociety 2026 footer. No sky controls, hero copy, or immersive buttons. Respect reduced-motion preferences.
