@@ -6,6 +6,7 @@ const density = 240;
 let width = 0, height = 0, time = 0, lastFrame = 0;
 let nextMeteorAt = 4 + Math.random() * 6;
 let meteorStartedAt = -Infinity;
+let meteorPath = null;
 let pointer = { x: 0, y: 0 }, drift = { x: 0, y: 0 };
 let seed = 85731;
 function random() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
@@ -54,6 +55,19 @@ const societyLetters = [
   ['00100','00100','01110','00100','00100','00100','00011'],
   ['00000','00000','10001','10001','01111','00001','01110'],
 ];
+function createMeteorPath() {
+  const angle = Math.random() * Math.PI * 2;
+  const distance = Math.min(width, height) * (.25 + Math.random() * .25);
+  const dx = Math.cos(angle) * distance / width;
+  const dy = Math.sin(angle) * distance / height;
+  // Choose a start that keeps both endpoints inside the sky, in any direction.
+  return {
+    x: .1 + Math.max(0, -dx) + Math.random() * (.8 - Math.abs(dx)),
+    y: .1 + Math.max(0, -dy) + Math.random() * (.8 - Math.abs(dy)),
+    dx,
+    dy,
+  };
+}
 function resize() {
   const bounds = canvas.getBoundingClientRect();
   width = bounds.width; height = bounds.height;
@@ -96,14 +110,20 @@ function draw() {
       });
     });
   });
-  // Shooting stars cross the upper sky every 4–10 seconds of active motion.
+  // Each shooting star gets a fresh position and direction every 4–10 seconds.
   const meteor = time - meteorStartedAt;
-  if(meteor >= 0 && meteor < 1.6){
+  if(meteorPath && meteor >= 0 && meteor < 1.6){
     const progress=meteor/1.6;
+    const headX = (meteorPath.x + progress * meteorPath.dx) * width;
+    const headY = (meteorPath.y + progress * meteorPath.dy) * height;
+    const travelX = meteorPath.dx * width;
+    const travelY = meteorPath.dy * height;
+    const distance = Math.hypot(travelX, travelY);
+    const tailStep = Math.min(7, distance / 16);
     ctx.font='10px monospace';
     for(let i=0;i<8;i++){
       ctx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
-      ctx.fillText(i===0?'+':'.',width*.2+progress*width*.3-i*7,height*.08+progress*90-i*3);
+      ctx.fillText(i===0?'+':'.',headX-i*tailStep*travelX/distance,headY-i*tailStep*travelY/distance);
     }
   }
 }
@@ -118,6 +138,7 @@ function frame(now) {
   time += dt;
   if (time >= nextMeteorAt) {
     meteorStartedAt = time;
+    meteorPath = createMeteorPath();
     nextMeteorAt = time + 4 + Math.random() * 6;
   }
   drift.x += (pointer.x - drift.x) * .04;
