@@ -4,9 +4,10 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let paused = reducedMotion.matches;
 const density = 240;
 let width = 0, height = 0, time = 0, lastFrame = 0;
-let nextMeteorAt = 4 + Math.random() * 6;
+let nextMeteorAt = 1 + Math.random() * 9;
 let meteorStartedAt = -Infinity;
-let meteorPath = null;
+let meteorPaths = [];
+let meteorDuration = 1.6;
 let pointer = { x: 0, y: 0 }, drift = { x: 0, y: 0 };
 let seed = 85731;
 function random() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
@@ -110,20 +111,22 @@ function draw() {
       });
     });
   });
-  // Each shooting star gets a fresh position and direction every 4–10 seconds.
+  // Bursts contain one or two independent shooting stars every 1–10 seconds.
   const meteor = time - meteorStartedAt;
-  if(meteorPath && meteor >= 0 && meteor < 1.6){
-    const progress=meteor/1.6;
-    const headX = (meteorPath.x + progress * meteorPath.dx) * width;
-    const headY = (meteorPath.y + progress * meteorPath.dy) * height;
-    const travelX = meteorPath.dx * width;
-    const travelY = meteorPath.dy * height;
-    const distance = Math.hypot(travelX, travelY);
-    const tailStep = Math.min(7, distance / 16);
-    ctx.font='10px monospace';
-    for(let i=0;i<8;i++){
-      ctx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
-      ctx.fillText(i===0?'+':'.',headX-i*tailStep*travelX/distance,headY-i*tailStep*travelY/distance);
+  if(meteor >= 0 && meteor < meteorDuration){
+    const progress=meteor/meteorDuration;
+    for (const meteorPath of meteorPaths) {
+      const headX = (meteorPath.x + progress * meteorPath.dx) * width;
+      const headY = (meteorPath.y + progress * meteorPath.dy) * height;
+      const travelX = meteorPath.dx * width;
+      const travelY = meteorPath.dy * height;
+      const distance = Math.hypot(travelX, travelY);
+      const tailStep = Math.min(7, distance / 16);
+      ctx.font='10px monospace';
+      for(let i=0;i<8;i++){
+        ctx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
+        ctx.fillText(i===0?'+':'.',headX-i*tailStep*travelX/distance,headY-i*tailStep*travelY/distance);
+      }
     }
   }
 }
@@ -138,8 +141,11 @@ function frame(now) {
   time += dt;
   if (time >= nextMeteorAt) {
     meteorStartedAt = time;
-    meteorPath = createMeteorPath();
-    nextMeteorAt = time + 4 + Math.random() * 6;
+    meteorPaths = Array.from({ length: 1 + Math.floor(Math.random() * 2) }, createMeteorPath);
+    const interval = 1 + Math.random() * 9;
+    // Finish the fade before the next burst, even with a one-second interval.
+    meteorDuration = Math.min(1.6, interval * .9);
+    nextMeteorAt = time + interval;
   }
   drift.x += (pointer.x - drift.x) * .04;
   drift.y += (pointer.y - drift.y) * .04;
