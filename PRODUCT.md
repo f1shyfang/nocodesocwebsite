@@ -20,3 +20,6 @@ The website is for No Code Society (NCS). Use the user-supplied pixelated white 
 
 ## Restored sky
 Restore the drifting ASCII moon and stars as an ambient scene between the NCS header and the nocodesociety 2026 footer. No sky controls, hero copy, or immersive buttons. Respect reduced-motion preferences.
+
+## ASCII logo scene
+The central moon now follows the supplied No Code Society crescent logo, including its NO CODE Society lettering. Sample the original local image into ASCII glyphs; keep the lettering stable and legible as the entire logo drifts. Preserve the star field, reduced-motion handling, and absence of controls.
