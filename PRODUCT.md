@@ -11,3 +11,6 @@ Quiet, tactile, celestial. A person unwinding at their laptop after dark watches
 
 ## Accessibility
 Keyboard-operable controls, visible focus, descriptive canvas alternative, reduced-motion support, and an explicit pause control.
+
+## Current revision
+The user renamed the wordmark to NCS and explicitly selected the sky/hero section, customization panel, and footer for removal. The current page retains the header and about dialog.
