@@ -4,6 +4,33 @@ const image = viewer.querySelector('.viewer-image');
 const count = viewer.querySelector('.viewer-count');
 let current = 0;
 let opener;
+let swipeStart = null;
+
+// Track only single-finger gestures; leave pinching and zoomed-image panning native.
+viewer.addEventListener('touchstart', event => {
+  swipeStart = null;
+  if (event.touches.length !== 1 || event.target.closest('button') ||
+      (window.visualViewport?.scale ?? 1) > 1) return;
+  const touch = event.touches[0];
+  swipeStart = { x: touch.clientX, y: touch.clientY, id: touch.identifier };
+}, { passive: true });
+viewer.addEventListener('touchmove', event => {
+  if (event.touches.length !== 1) swipeStart = null;
+}, { passive: true });
+viewer.addEventListener('touchcancel', () => { swipeStart = null; });
+viewer.addEventListener('touchend', event => {
+  const start = swipeStart;
+  swipeStart = null;
+  if (!start || event.touches.length || (window.visualViewport?.scale ?? 1) > 1) return;
+  const touch = [...event.changedTouches].find(item => item.identifier === start.id);
+  if (!touch) return;
+  const dx = touch.clientX - start.x;
+  const dy = touch.clientY - start.y;
+  if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  // Suppress the synthetic click so a swipe on the backdrop doesn't close it.
+  event.preventDefault();
+  showPhoto(current + (dx < 0 ? 1 : -1));
+}, { passive: false });
 
 function showPhoto(index) {
   current = (index + photos.length) % photos.length;
@@ -45,6 +72,7 @@ viewer.addEventListener('click', event => {
   if (event.target === viewer) viewer.close();
 });
 viewer.addEventListener('close', () => {
+  swipeStart = null;
   document.body.classList.remove('photo-viewer-open');
   image.removeAttribute('src');
   opener?.focus();

@@ -73,7 +73,7 @@ body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .photo-open:focus-visible{outline-offset:-6px}
 body.photo-viewer-open{overflow:hidden}
 dialog.photo-viewer{width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:72px 80px;border:0;border-radius:0;background:rgba(0,0,0,.94);overflow:hidden}
-.photo-viewer[open]{display:flex;align-items:center;justify-content:center}
+.photo-viewer[open]{display:flex;align-items:center;justify-content:center;touch-action:pan-y pinch-zoom}
 .viewer-image{display:block;max-width:100%;max-height:100%;object-fit:contain;color:var(--ink)}
 .viewer-close,.viewer-arrow{position:absolute;display:grid;place-items:center;width:48px;height:48px;padding:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:50%;font-size:26px}
 .viewer-close:hover,.viewer-arrow:hover{background:var(--line)}
