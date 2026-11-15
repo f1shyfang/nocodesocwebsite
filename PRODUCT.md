@@ -14,3 +14,6 @@ Keyboard-operable controls, visible focus, descriptive canvas alternative, reduc
 
 ## Current revision
 The user renamed the wordmark to NCS and explicitly selected the sky/hero section, customization panel, and footer for removal. The current page retains the header and about dialog.
+
+## Brand identity
+The website is for No Code Society (NCS). Use the user-supplied pixelated white crescent logo at `dist/assets/no-code-society-logo.png`. Nightfall was an initial design concept, not the organization's identity. Do not describe NCS as a sky experiment or invent its history, membership, events, or affiliations.

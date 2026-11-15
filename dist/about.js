@@ -1,7 +1,7 @@
 const about = document.querySelector('#about');
 document.querySelector('#about-open').addEventListener('click', () => about.showModal());
 document.querySelector('#about-close').addEventListener('click', () => about.close());
-document.querySelector('#back-to-sky').addEventListener('click', () => about.close());
+document.querySelector('#about-done').addEventListener('click', () => about.close());
 about.addEventListener('click', event => {
   if (event.target !== about) return;
   const bounds = about.getBoundingClientRect();
