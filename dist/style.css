@@ -21,3 +21,6 @@ body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 /* Ambient sky fills the space between the NCS header and footer. */
 .sky-scene{position:relative;flex:1;min-height:360px;margin:0;isolation:isolate}
 .sky-scene #sky{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* Shooting stars can enter and leave at the actual page edges. */
+#shooting-stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}

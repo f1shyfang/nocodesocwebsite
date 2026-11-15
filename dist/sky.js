@@ -1,5 +1,8 @@
 const canvas = document.querySelector('#sky');
 const ctx = canvas.getContext('2d');
+const meteorCanvas = document.querySelector('#shooting-stars');
+const meteorCtx = meteorCanvas.getContext('2d');
+let meteorWidth = 0, meteorHeight = 0;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let paused = reducedMotion.matches;
 const density = 240;
@@ -57,16 +60,21 @@ const societyLetters = [
   ['00000','00000','10001','10001','01111','00001','01110'],
 ];
 function createMeteorPath() {
-  const angle = Math.random() * Math.PI * 2;
-  const distance = Math.min(width, height) * (.25 + Math.random() * .25);
-  const dx = Math.cos(angle) * distance / width;
-  const dy = Math.sin(angle) * distance / height;
-  // Choose a start that keeps both endpoints inside the sky, in any direction.
+  const corner = Math.floor(Math.random() * 4);
+  const x = corner % 2;
+  const y = Math.floor(corner / 2);
+  // Point inward from the selected page corner, with a varied diagonal angle.
+  const angle = (.12 + Math.random() * .76) * Math.PI / 2;
+  const directionX = (x ? -1 : 1) * Math.cos(angle);
+  const directionY = (y ? -1 : 1) * Math.sin(angle);
+  const exitDistance = Math.min(meteorWidth / Math.abs(directionX), meteorHeight / Math.abs(directionY));
+  // Carry the head and its entire trail beyond the opposite page edge.
+  const distance = exitDistance + Math.max(100, Math.min(meteorWidth, meteorHeight) * .2);
   return {
-    x: .1 + Math.max(0, -dx) + Math.random() * (.8 - Math.abs(dx)),
-    y: .1 + Math.max(0, -dy) + Math.random() * (.8 - Math.abs(dy)),
-    dx,
-    dy,
+    x,
+    y,
+    dx: directionX * distance / meteorWidth,
+    dy: directionY * distance / meteorHeight,
   };
 }
 function resize() {
@@ -75,10 +83,19 @@ function resize() {
   const ratio = Math.min(devicePixelRatio || 1, 2);
   canvas.width = Math.round(width*ratio); canvas.height = Math.round(height*ratio);
   ctx.setTransform(ratio,0,0,ratio,0,0);
+  const meteorBounds = meteorCanvas.getBoundingClientRect();
+  meteorWidth = meteorBounds.width;
+  meteorHeight = meteorBounds.height;
+  meteorCanvas.width = Math.round(meteorWidth * ratio);
+  meteorCanvas.height = Math.round(meteorHeight * ratio);
+  meteorCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  meteorCtx.textAlign = 'center';
+  meteorCtx.textBaseline = 'middle';
   draw();
 }
 function draw() {
   ctx.clearRect(0,0,width,height);
+  meteorCtx.clearRect(0,0,meteorWidth,meteorHeight);
   const cx = width*.5 + drift.x*12 + Math.sin(time*.18)*7;
   const cy = height*.48 + drift.y*9 + Math.cos(time*.21)*6;
   const radius = Math.min(width*.29, height*.29, 225);
@@ -116,16 +133,16 @@ function draw() {
   if(meteor >= 0 && meteor < meteorDuration){
     const progress=meteor/meteorDuration;
     for (const meteorPath of meteorPaths) {
-      const headX = (meteorPath.x + progress * meteorPath.dx) * width;
-      const headY = (meteorPath.y + progress * meteorPath.dy) * height;
-      const travelX = meteorPath.dx * width;
-      const travelY = meteorPath.dy * height;
+      const headX = (meteorPath.x + progress * meteorPath.dx) * meteorWidth;
+      const headY = (meteorPath.y + progress * meteorPath.dy) * meteorHeight;
+      const travelX = meteorPath.dx * meteorWidth;
+      const travelY = meteorPath.dy * meteorHeight;
       const distance = Math.hypot(travelX, travelY);
       const tailStep = Math.min(7, distance / 16);
-      ctx.font='10px monospace';
+      meteorCtx.font='10px monospace';
       for(let i=0;i<8;i++){
-        ctx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
-        ctx.fillText(i===0?'+':'.',headX-i*tailStep*travelX/distance,headY-i*tailStep*travelY/distance);
+        meteorCtx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
+        meteorCtx.fillText(i===0?'+':'.',headX-i*tailStep*travelX/distance,headY-i*tailStep*travelY/distance);
       }
     }
   }
@@ -164,6 +181,8 @@ window.addEventListener('pointermove', event => {
   pointer = { x: event.clientX / innerWidth * 2 - 1, y: event.clientY / innerHeight * 2 - 1 };
 }, { passive: true });
 document.documentElement.addEventListener('pointerleave', () => { pointer = { x: 0, y: 0 }; });
-new ResizeObserver(resize).observe(canvas);
+const sceneResizeObserver = new ResizeObserver(resize);
+sceneResizeObserver.observe(canvas);
+sceneResizeObserver.observe(meteorCanvas);
 resize();
 syncMotion();
