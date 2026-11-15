@@ -4,6 +4,8 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let paused = reducedMotion.matches;
 const density = 240;
 let width = 0, height = 0, time = 0, lastFrame = 0;
+let nextMeteorAt = 4 + Math.random() * 6;
+let meteorStartedAt = -Infinity;
 let pointer = { x: 0, y: 0 }, drift = { x: 0, y: 0 };
 let seed = 85731;
 function random() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
@@ -94,10 +96,10 @@ function draw() {
       });
     });
   });
-  // A rare, quiet shooting star crosses the upper sky.
-  const meteor=time%19;
-  if(meteor>15&&meteor<16.6){
-    const progress=(meteor-15)/1.6;
+  // Shooting stars cross the upper sky every 4–10 seconds of active motion.
+  const meteor = time - meteorStartedAt;
+  if(meteor >= 0 && meteor < 1.6){
+    const progress=meteor/1.6;
     ctx.font='10px monospace';
     for(let i=0;i<8;i++){
       ctx.fillStyle=`rgba(218,226,208,${(1-i/8)*Math.sin(progress*Math.PI)*.6})`;
@@ -114,6 +116,10 @@ function frame(now) {
   const dt = Math.min((now - lastFrame) / 1000, .1);
   lastFrame = now;
   time += dt;
+  if (time >= nextMeteorAt) {
+    meteorStartedAt = time;
+    nextMeteorAt = time + 4 + Math.random() * 6;
+  }
   drift.x += (pointer.x - drift.x) * .04;
   drift.y += (pointer.y - drift.y) * .04;
   draw();
