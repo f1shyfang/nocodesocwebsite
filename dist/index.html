@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101212">
+  <meta name="description" content="A little space to slow down. Explore a living ASCII night sky, change the moon, and let the stars drift.">
+  <title>Nightfall · A little space to slow down</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101212'/%3E%3Cpath d='M43 12a23 23 0 1 0 9 36A25 25 0 0 1 43 12' fill='%23e4e8dd'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="sky.js"></script>
+</head>
+<body>
+  <header class="header">
+    <a class="wordmark" href="./" aria-label="Nightfall home"><span class="brand-moon" aria-hidden="true">☾</span> nightfall<span class="wordmark-dot">.</span></a>
+    <span class="header-caption">A SMALL CORNER OF THE UNIVERSE</span>
+    <button class="about-trigger" id="about-open">Behind the sky <span aria-hidden="true">↗</span></button>
+  </header>
+  <main>
+    <section class="experience" aria-label="Interactive night sky">
+      <canvas id="sky" role="img" aria-label="A drifting moon rendered in thousands of ASCII characters, surrounded by gently twinkling stars."></canvas>
+      <div class="scene-top"><span><i class="live-dot"></i> THE NIGHT IS YOURS</span><span class="scene-code">ASCII OBSERVATORY / EST. 2026</span></div>
+      <div class="hero-copy">
+        <p class="eyebrow">Less noise. More night.</p>
+        <h1>A little space<br>to slow down<span>.</span></h1>
+        <p class="description">Somewhere between the stars and the silence.<br>A living sky, made entirely of characters.</p>
+        <button class="wander-button" id="wander">Stay a little while <span aria-hidden="true">↗</span></button>
+        <p class="small-note">No destination. Just a moment.</p>
+      </div>
+      <div class="moon-label"><span class="label-line"></span><div><span id="moon-title">THE WAXING MOON</span><small id="moon-detail">A little more light, every night.</small></div></div>
+      <div class="scene-bottom"><span>✧ <span id="star-count">240</span> points of possibility</span><span>Move your cursor. The sky follows.</span><span class="frame-label">RENDERED IN CHARACTERS, NOT PIXELS*</span></div>
+    </section>
+    <section class="controls" aria-label="Customize the night sky">
+      <div class="control-intro"><span class="control-star" aria-hidden="true">✳</span><div>Your kind of night<small>Find a sky that feels like you.</small></div></div>
+      <fieldset class="phase-control"><legend>MOON PHASE</legend><div class="segments"><button data-phase="crescent" aria-pressed="false"><span aria-hidden="true">☾</span> Crescent</button><button data-phase="waxing" aria-pressed="true"><span aria-hidden="true">◕</span> Waxing</button><button data-phase="full" aria-pressed="false"><span aria-hidden="true">○</span> Full</button></div></fieldset>
+      <div class="density-control"><label for="density">A FEW STARS <span>A THOUSAND WISHES</span></label><input id="density" type="range" min="80" max="600" value="240" step="10" aria-label="Number of stars"><div class="range-ends"><span>Quiet</span><span>Full of wonder</span></div></div>
+      <button class="pause-button" id="pause" aria-pressed="false"><span id="pause-icon" aria-hidden="true">Ⅱ</span><span id="pause-text">Pause sky</span></button>
+    </section>
+  </main>
+  <footer><span>A quiet experiment in light & letters.</span><span class="footer-center">LOOK UP. BREATHE OUT.</span><span>Made of <span class="footer-symbols">. : * + @</span> and a little wonder</span></footer>
+  <dialog id="about"><button class="close-dialog" id="about-close" aria-label="Close about dialog">×</button><span class="dialog-moon" aria-hidden="true">☾</span><p class="eyebrow">Behind the sky</p><h2>A universe in<br>little characters.</h2><p>Nightfall is a small, generative escape. Every star and every crater on the moon is drawn with ordinary text characters, arranged into something a little less ordinary.</p><p>Change the moon, scatter a few more stars, or hide the controls and stay awhile. There’s nothing to finish here.</p><p class="about-footnote">An imagined sky, not an astronomical forecast.<br>*The characters are drawn on a digital canvas.</p><button class="wander-button" id="back-to-sky">Back to the sky <span aria-hidden="true">↗</span></button></dialog>
+  <button class="leave-immersive" id="leave-immersive" hidden>↙ &nbsp; Back to earth <kbd>Esc</kbd></button>
+</body>
+</html>
